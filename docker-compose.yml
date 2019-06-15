@@ -1,0 +1,27 @@
+version: "3.5"
+services:
+    php-upstream:
+        build: docker/php-blackfire
+        volumes:
+        - ./web:/app
+        environment:
+        - BLACKFIRE_CLIENT_ID
+        - BLACKFIRE_CLIENT_TOKEN
+    nginx:
+        image: nginx:alpine
+        depends_on:
+        - php-upstream
+        volumes:
+        - ./web:/app
+        - ./docker/site.conf:/etc/nginx/conf.d/site.conf
+    blackfire:
+        image: blackfire/blackfire
+        environment:
+        - BLACKFIRE_SERVER_ID
+        - BLACKFIRE_SERVER_TOKEN
+        - BLACKFIRE_CLIENT_ID
+        - BLACKFIRE_CLIENT_TOKEN
+
+networks:
+    default:
+        name: symfony_live_warsaw

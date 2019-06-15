@@ -1,0 +1,15 @@
+# scenario.bkf
+endpoint 'https://api.gog.com'
+
+scenario
+    name "Games API"
+
+    visit url('products/prices?ids=6,7,8,9,10&countryCode=PL')
+        name "It shows correct number of elements list"
+        expect status_code() == 200
+        expect json('_embedded.items | length(@)') == 5
+        assert metrics.http.requests.count == 0
+        assert metrics.doctrine.entities.hydrated.count < 10
+        assert metrics.sql.queries.count < 3
+        warmup 1
+        samples 5
